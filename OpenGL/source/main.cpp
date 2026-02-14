@@ -15,10 +15,25 @@
 #include "Shader.h"
 #include "Texture.h"
 
-void framebuffer_size_callback(GLFWwindow*, int width, int height);
+#include "Camera.h"
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, double positionX, double positionY);
+void scroll_callback(GLFWwindow* window, double offsetX, double offsetY);
+
+void processInput(GLFWwindow* window);
+
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 800;
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
+bool firstMouse = true;
+float lastMouseX = (float)SCR_WIDTH / 2.0f;
+float lastMouseY = (float)SCR_HEIGHT / 2.0f;
 
 int main() {
 
@@ -28,7 +43,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "MrX", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Lookin for my Kamakiri", nullptr, nullptr);
 	if (window == NULL) {
 		std::cout << "Failed to initialize window" << std::endl;
 		glfwTerminate();
@@ -43,6 +58,11 @@ int main() {
 
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+
+	glfwSwapInterval(1);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
@@ -106,13 +126,6 @@ int main() {
 	layout.Push<float>(2);
 	va.AddAttribute(vb, layout);
 
-	/*unsigned int indices[] = {
-		0, 1, 3,
-		1, 3, 2
-	};
-	IndexBuffer ib(indices, sizeof(indices));
-	ib.Bind();*/
-
 	Shader shader("source/resources/shaders/My.Shader");
 	shader.Bind();
 
@@ -133,22 +146,24 @@ int main() {
 	};
 
 	while (!glfwWindowShouldClose(window)) {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//glm::mat4 model(1.0f);
-		//model = glm::rotate(model, glm::radians((float)glfwGetTime()) * 25, glm::vec3(1.0f, 0.0f, 0.0f));
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		processInput(window);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		texture.Bind(0);
 		shader.Uniform1i("tex", 0);
 		texture2.Bind(1);
 		shader.Uniform1i("tex2", 1);
 
-		glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-
-		glm::mat4 view(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
+		glm::mat4 proj = glm::perspective(glm::radians(camera.Fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		shader.UniformMatrix4fv("proj", glm::value_ptr(proj));
+
+		glm::mat4 view = camera.getViewMatrix();
 		shader.UniformMatrix4fv("view", glm::value_ptr(view));
 
 		for (unsigned int i = 0; i < 10; i++)
@@ -164,9 +179,6 @@ int main() {
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -177,4 +189,46 @@ int main() {
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow* window) {
+	float cameraSpeed = 2.5 * deltaTime;
+
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, true);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		camera.processKeys(FORWARD, deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		camera.processKeys(LEFT, deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		camera.processKeys(BACKWARD, deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		camera.processKeys(RIGHT, deltaTime);
+	}
+}
+
+void mouse_callback(GLFWwindow* window, double positionX, double positionY) {
+
+	if (firstMouse) {
+		lastMouseX = positionX;
+		lastMouseY = positionY;
+		firstMouse = false;
+	}
+
+	float offsetX = positionX - lastMouseX;
+	float offsetY = lastMouseY - positionY;
+
+	lastMouseX = positionX;
+	lastMouseY = positionY;
+
+	camera.processMouse(offsetX, offsetY);
+}
+
+void scroll_callback(GLFWwindow* window, double offsetX, double offsetY) {
+	camera.processScroll(offsetY);
 }
