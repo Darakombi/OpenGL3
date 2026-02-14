@@ -1,1 +1,1 @@
-<h1>HFollowing LearnOpenGL.com tutorial 😃</h1>
+<h1>Following LearnOpenGL.com tutorial 😃</h1>
