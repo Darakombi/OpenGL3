@@ -2,10 +2,20 @@
 
 #include "glad/glad.h"
 
-VertexBuffer::VertexBuffer(const void* data, const unsigned int size){
+VertexBuffer::VertexBuffer(const float* vertices, const unsigned int size)
+	: type(GL_ARRAY_BUFFER)
+{
 	glGenBuffers(1, &ID);
-	glBindBuffer(GL_ARRAY_BUFFER, ID);
-	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+	glBindBuffer(type, ID);
+	glBufferData(type, size, vertices, GL_STATIC_DRAW);
+}
+
+VertexBuffer::VertexBuffer(const unsigned int* indices, const unsigned int size)
+	: type(GL_ELEMENT_ARRAY_BUFFER)
+{
+	glGenBuffers(1, &ID);
+	glBindBuffer(type, ID);
+	glBufferData(type, size, indices, GL_STATIC_DRAW);
 }
 
 VertexBuffer::~VertexBuffer() {

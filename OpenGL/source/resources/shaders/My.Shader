@@ -18,11 +18,14 @@ void main()
 #shader fragment
 #version 330 core
 
-out vec4 color;
-uniform sampler2D tex;
 in vec2 tex_coords;
+
+uniform sampler2D tex;
+uniform sampler2D tex2;
+
+out vec4 color;
 
 void main()
 {
-	color = texture(tex, tex_coords);
+	color = mix(texture(tex, tex_coords), texture(tex2, tex_coords), 0.3);
 };

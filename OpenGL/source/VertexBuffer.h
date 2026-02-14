@@ -4,8 +4,10 @@ class VertexBuffer
 {
 private:
 	unsigned int ID = 0;
+	unsigned int type;
 public:
-	VertexBuffer(const void* data, const unsigned int size);
+	VertexBuffer(const float* vertices, const unsigned int size);
+	VertexBuffer(const unsigned int* indices, const unsigned int size);
 	~VertexBuffer();
 
 	void Bind() const;
