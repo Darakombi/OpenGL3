@@ -13,12 +13,11 @@ enum CameraDirection {
 
 float YAW = -90.0f;
 float PITCH = 0.0f;
-float SENSITIVITY = 0.1f;
+float SENSITIVITY = 0.075f;
 float SPEED = 2.5f;
 float FOV = 45.0f;
 float FOV_MIN = 1.0f;
 float FOV_MAX = 45.0f;
-
 
 class Camera {
 public:
@@ -56,26 +55,54 @@ public:
 	}
 
 	glm::mat4 getViewMatrix() const {
-		return glm::lookAt(Position, Position + Front, Up);
+		return
+			glm::mat4(
+				Right.x, Up.x, -Front.x, 0.0f,
+				Right.y, Up.y, -Front.y, 0.0f,
+				Right.z, Up.z, -Front.z, 0.0f,
+				0.0f, 0.0f, 0.0f, 1.0f)
+			*
+			glm::mat4(
+				1.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, 1.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 1.0f, 0.0f,
+				-Position.x, -Position.y, -Position.z, 1.0f);
+		//return glm::lookAt(Position, Position + Front, Up);
 	}
 
-	void processKeys(CameraDirection dir, float deltaTime) {
+	const glm::vec3 getPosition() const { return Position; }
+
+	void processKeys(CameraDirection dir, float deltaTime, bool ignorePitch = false) {
 
 		float velocity = MovementSpeed * deltaTime;
 
-		switch (dir) {
-		case FORWARD:  Position += Front * velocity; break;
-		case LEFT:	   Position -= Right * velocity; break;
-		case BACKWARD: Position -= Front * velocity; break;
-		case RIGHT:	   Position += Right * velocity; break;
+		if (ignorePitch)
+		{
+			glm::vec3 flatFront = glm::normalize(glm::vec3(Front.x, 0.0f, Front.z));
+			glm::vec3 flatRight = glm::normalize(glm::cross(flatFront, WorldUp));
+
+			switch (dir) {
+			case FORWARD:  Position += flatFront * velocity; break;
+			case BACKWARD: Position -= flatFront * velocity; break;
+			case LEFT:	   Position -= flatRight * velocity; break;
+			case RIGHT:	   Position += flatRight * velocity; break;
+			}
+		}
+		else {
+			switch (dir) {
+			case FORWARD:  Position += Front * velocity; break;
+			case BACKWARD: Position -= Front * velocity; break;
+			case LEFT:	   Position -= Right * velocity; break;
+			case RIGHT:	   Position += Right * velocity; break;
+			}
 		}
 	}
 
-	void processMouse(float offsetX, float offsetY, bool constrainPitch = false) {
+	void processMouse(float offsetX, float offsetY, bool constrainPitch = true) {
 		offsetX *= MouseSensitivity;
 		offsetY *= MouseSensitivity;
 
-		Yaw += offsetX;
+		Yaw = glm::mod(Yaw + offsetX, 360.0f);
 		Pitch += offsetY;
 
 		if (constrainPitch)
@@ -90,7 +117,7 @@ public:
 
 private:
 	void updateCameraVectors() {
-		glm::vec3 front;
+		glm::vec3 front(0.0f);
 		front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 		front.y = sin(glm::radians(Pitch));
 		front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));

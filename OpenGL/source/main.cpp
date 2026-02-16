@@ -8,6 +8,7 @@
 
 #include <iostream>
 
+#include "Object.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
@@ -68,82 +69,120 @@ int main() {
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
-	float vertices[] = {
+	const float subjectVertices[] = {
 		// back face
-		-0.5, -0.5, -0.5, 0, 0,
-		 0.5,  0.5, -0.5, 1, 1,
-		 0.5, -0.5, -0.5, 1, 0,
-		 0.5,  0.5, -0.5, 1, 1,
-		-0.5, -0.5, -0.5, 0, 0,
-		-0.5,  0.5, -0.5, 0, 1,
+		-0.5, -0.5, -0.5,    0.0f,  0.0f, -1.0f,
+		 0.5,  0.5, -0.5,    0.0f,  0.0f, -1.0f,
+		 0.5, -0.5, -0.5,    0.0f,  0.0f, -1.0f,
+		 0.5,  0.5, -0.5,    0.0f,  0.0f, -1.0f,
+		-0.5, -0.5, -0.5,    0.0f,  0.0f, -1.0f,
+		-0.5,  0.5, -0.5,    0.0f,  0.0f, -1.0f,
 
 		// front face
-		-0.5, -0.5,  0.5, 0, 0,
-		 0.5, -0.5,  0.5, 1, 0,
-		 0.5,  0.5,  0.5, 1, 1,
-		 0.5,  0.5,  0.5, 1, 1,
-		-0.5,  0.5,  0.5, 0, 1,
-		-0.5, -0.5,  0.5, 0, 0,
+		-0.5, -0.5,  0.5,    0.0f,  0.0f,  1.0f,
+		 0.5, -0.5,  0.5,    0.0f,  0.0f,  1.0f,
+		 0.5,  0.5,  0.5,    0.0f,  0.0f,  1.0f,
+		 0.5,  0.5,  0.5,    0.0f,  0.0f,  1.0f,
+		-0.5,  0.5,  0.5,    0.0f,  0.0f,  1.0f,
+		-0.5, -0.5,  0.5,    0.0f,  0.0f,  1.0f,
 
 		// left face
-		-0.5, -0.5, -0.5, 0, 0,
-		-0.5, -0.5,  0.5, 1, 0,
-		-0.5,  0.5,  0.5, 1, 1,
-		-0.5,  0.5,  0.5, 1, 1,
-		-0.5,  0.5, -0.5, 0, 1,
-		-0.5, -0.5, -0.5, 0, 0,
+		-0.5, -0.5, -0.5,   -1.0f,  0.0f,  0.0f,
+		-0.5, -0.5,  0.5,   -1.0f,  0.0f,  0.0f,
+		-0.5,  0.5,  0.5,   -1.0f,  0.0f,  0.0f,
+		-0.5,  0.5,  0.5,   -1.0f,  0.0f,  0.0f,
+		-0.5,  0.5, -0.5,   -1.0f,  0.0f,  0.0f,
+		-0.5, -0.5, -0.5,   -1.0f,  0.0f,  0.0f,
 
 		// right face
-		 0.5, -0.5, -0.5, 0, 0,
-		 0.5,  0.5,  0.5, 1, 1,
-		 0.5, -0.5,  0.5, 1, 0,
-		 0.5,  0.5,  0.5, 1, 1,
-		 0.5, -0.5, -0.5, 0, 0,
-		 0.5,  0.5, -0.5, 0, 1,
+		 0.5, -0.5, -0.5,    1.0f,  0.0f,  0.0f,
+		 0.5,  0.5,  0.5,    1.0f,  0.0f,  0.0f,
+		 0.5, -0.5,  0.5,    1.0f,  0.0f,  0.0f,
+		 0.5,  0.5,  0.5,    1.0f,  0.0f,  0.0f,
+		 0.5, -0.5, -0.5,    1.0f,  0.0f,  0.0f,
+		 0.5,  0.5, -0.5,    1.0f,  0.0f,  0.0f,
+
+		 // bottom face
+		 -0.5, -0.5,  0.5,    0.0f, -1.0f,  0.0f,
+		  0.5, -0.5,  0.5,    0.0f, -1.0f,  0.0f,
+		  0.5, -0.5, -0.5,    0.0f, -1.0f,  0.0f,
+		  0.5, -0.5, -0.5,    0.0f, -1.0f,  0.0f,
+		 -0.5, -0.5, -0.5,    0.0f, -1.0f,  0.0f,
+		 -0.5, -0.5,  0.5,    0.0f, -1.0f,  0.0f,
 
 		 // top face
-		-0.5, -0.5,  0.5, 0, 0,
-		 0.5, -0.5, -0.5, 1, 1,
-		 0.5, -0.5,  0.5, 1, 0,
-		 0.5, -0.5, -0.5, 1, 1,
-		-0.5, -0.5,  0.5, 0, 0,
-		-0.5, -0.5, -0.5, 0, 1,
+		 -0.5,  0.5,  0.5,    0.0f,  1.0f,  0.0f,
+		  0.5,  0.5, -0.5,    0.0f,  1.0f,  0.0f,
+		  0.5,  0.5,  0.5,    0.0f,  1.0f,  0.0f,
+		  0.5,  0.5, -0.5,    0.0f,  1.0f,  0.0f,
+		 -0.5,  0.5,  0.5,    0.0f,  1.0f,  0.0f,
+		 -0.5,  0.5, -0.5,    0.0f,  1.0f,  0.0f,
+	};
+	const unsigned int subjectLayout[] = { 3, 3 };
+	Object subject(subjectVertices, sizeof(subjectVertices) / sizeof(float), subjectLayout, sizeof(subjectLayout) / sizeof(unsigned int));
+	Shader subjectShader("source/resources/shaders/Main.Shader");
+	glm::vec3 subjectColor(1.0f, 0.5f, 0.31f);
+
+	Object subject2(subjectVertices, sizeof(subjectVertices) / sizeof(float), subjectLayout, sizeof(subjectLayout) / sizeof(unsigned int));
+	glm::vec3 subjectColor2(0.2f, 0.5f, 0.31f);
+
+	const float lampVertices[] = {
+		// back face
+		-0.5, -0.5, -0.5,
+		 0.5,  0.5, -0.5,
+		 0.5, -0.5, -0.5,
+		 0.5,  0.5, -0.5,
+		-0.5, -0.5, -0.5,
+		-0.5,  0.5, -0.5,
+
+		// front face
+		-0.5, -0.5,  0.5,
+		 0.5, -0.5,  0.5,
+		 0.5,  0.5,  0.5,
+		 0.5,  0.5,  0.5,
+		-0.5,  0.5,  0.5,
+		-0.5, -0.5,  0.5,
+
+		// left face
+		-0.5, -0.5, -0.5,
+		-0.5, -0.5,  0.5,
+		-0.5,  0.5,  0.5,
+		-0.5,  0.5,  0.5,
+		-0.5,  0.5, -0.5,
+		-0.5, -0.5, -0.5,
+
+		// right face
+		 0.5, -0.5, -0.5,
+		 0.5,  0.5,  0.5,
+		 0.5, -0.5,  0.5,
+		 0.5,  0.5,  0.5,
+		 0.5, -0.5, -0.5,
+		 0.5,  0.5, -0.5,
+
+		 // top face
+		-0.5, -0.5,  0.5,
+		 0.5, -0.5, -0.5,
+		 0.5, -0.5,  0.5,
+		 0.5, -0.5, -0.5,
+		-0.5, -0.5,  0.5,
+		-0.5, -0.5, -0.5,
 
 		// bottom face
-		-0.5,  0.5,  0.5, 0, 0,
-		 0.5,  0.5,  0.5, 1, 0,
-		 0.5,  0.5, -0.5, 1, 1,
-		 0.5,  0.5, -0.5, 1, 1,
-		-0.5,  0.5, -0.5, 0, 1,
-		-0.5,  0.5,  0.5, 0, 0,
+		-0.5,  0.5,  0.5,
+		 0.5,  0.5,  0.5,
+		 0.5,  0.5, -0.5,
+		 0.5,  0.5, -0.5,
+		-0.5,  0.5, -0.5,
+		-0.5,  0.5,  0.5,
 	};
-	VertexArray va;
-	va.Bind();
+	const unsigned int lampLayout[] = { 3 };
+	Object lamp(lampVertices, sizeof(lampVertices) / sizeof(float), lampLayout, sizeof(lampLayout) / sizeof(unsigned int));
+	Shader lampShader("source/resources/shaders/Lamp.Shader");
+	glm::vec3 lampPos(1.2f, 1.0f, 2.0f);
+	glm::vec3 lampColor(1.0f, 1.0f, 1.0f);
 
-	VertexBuffer vb(vertices, sizeof(vertices));
-	VertexBufferLayout layout;
-	layout.Push<float>(3);
-	layout.Push<float>(2);
-	va.AddAttribute(vb, layout);
-
-	Shader shader("source/resources/shaders/My.Shader");
-	shader.Bind();
-
-	Texture texture("source/resources/textures/sammurray.png");
-	Texture texture2("source/resources/textures/lion.png");
-
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
+	float transX = 0.0f;
+	float transXAdd = 0.005f;
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -155,26 +194,49 @@ int main() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		texture.Bind(0);
-		shader.Uniform1i("tex", 0);
-		texture2.Bind(1);
-		shader.Uniform1i("tex2", 1);
-
 		glm::mat4 proj = glm::perspective(glm::radians(camera.Fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		shader.UniformMatrix4fv("proj", glm::value_ptr(proj));
-
 		glm::mat4 view = camera.getViewMatrix();
-		shader.UniformMatrix4fv("view", glm::value_ptr(view));
+		glm::mat4 model(1.0f);
 
-		for (unsigned int i = 0; i < 10; i++)
 		{
-			glm::mat4 model(1.0f);
-			model = glm::translate(model, cubePositions[i]);
+			subject.Bind();
+			subjectShader.Bind();
 
-			float angle = (i % 3 == 0) ? 20.0f * (float)glfwGetTime() : 0.0f;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			subjectShader.Uniform3fv("u_ObjectColor", glm::value_ptr(subjectColor));
+			subjectShader.Uniform3fv("u_LightColor", glm::value_ptr(lampColor));
+			subjectShader.Uniform3fv("u_LightPos", glm::value_ptr(lampPos));
+			subjectShader.Uniform3fv("u_ViewPos", glm::value_ptr(camera.getPosition()));
 
-			shader.UniformMatrix4fv("model", glm::value_ptr(model));
+			subjectShader.UniformMatrix4fv("proj", glm::value_ptr(proj));
+			subjectShader.UniformMatrix4fv("view", glm::value_ptr(view));
+			//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+			model = glm::translate(model, glm::vec3(transX, 0.0f, 0.0f));
+			subjectShader.UniformMatrix4fv("model", glm::value_ptr(model));
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+
+			subject2.Bind();
+			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 2.0f));
+			subjectShader.UniformMatrix4fv("model", glm::value_ptr(model));
+			subjectShader.Uniform3fv("u_ObjectColor", glm::value_ptr(subjectColor2));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
+		transX = std::sin(glfwGetTime()) + 1.0f;
+		transX += transXAdd;
+
+		{
+			lamp.Bind();
+			lampShader.Bind();
+
+			lampShader.Uniform3fv("u_Color", glm::value_ptr(lampColor));
+
+			lampShader.UniformMatrix4fv("proj", glm::value_ptr(proj));
+			lampShader.UniformMatrix4fv("view", glm::value_ptr(view));
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, lampPos);
+			model = glm::scale(model, glm::vec3(0.2f));
+			lampShader.UniformMatrix4fv("model", glm::value_ptr(model));
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}

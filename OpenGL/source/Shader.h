@@ -27,7 +27,10 @@ private:
 
 public:
 	int GetUniformLocation(const char* name) const;
-	void Uniform1i(const char* name, int v1) const;
-	void Uniform4f(const char* name, float v1, float v2, float v3, float v4) const;
-	void UniformMatrix4fv(const char* name, float* v1, bool transpose = false) const;
+	void Uniform1i(const char* name, const int v1) const;
+	void Uniform3f(const char* name, const float v1, const float v2, const float v3) const;
+	void Uniform3fv(const char* name, const float* v1) const;
+	void Uniform4f(const char* name, const float v1, const float v2, const float v3, const float v4) const;
+	void Uniform4fv(const char* name, const float* v1) const;
+	void UniformMatrix4fv(const char* name, const float* v1, const bool transpose = false) const;
 };
