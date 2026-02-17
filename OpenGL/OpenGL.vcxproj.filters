@@ -73,4 +73,24 @@
     <None Include="source\resources\shaders\Main.Shader" />
     <None Include="source\resources\shaders\Lamp.Shader" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="source\resources\textures\cube.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\happy.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\lion.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\sammurray.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\plank.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\glowstone.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

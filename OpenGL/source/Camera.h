@@ -8,13 +8,15 @@ enum CameraDirection {
 	FORWARD,
 	LEFT,
 	BACKWARD,
-	RIGHT
+	RIGHT,
+	UP,
+	DOWN
 };
 
 float YAW = -90.0f;
 float PITCH = 0.0f;
 float SENSITIVITY = 0.075f;
-float SPEED = 2.5f;
+float SPEED = 2.0f;
 float FOV = 45.0f;
 float FOV_MIN = 1.0f;
 float FOV_MAX = 45.0f;
@@ -72,7 +74,7 @@ public:
 
 	const glm::vec3 getPosition() const { return Position; }
 
-	void processKeys(CameraDirection dir, float deltaTime, bool ignorePitch = false) {
+	void processKeys(CameraDirection dir, float deltaTime, bool ignorePitch = true) {
 
 		float velocity = MovementSpeed * deltaTime;
 
@@ -86,6 +88,8 @@ public:
 			case BACKWARD: Position -= flatFront * velocity; break;
 			case LEFT:	   Position -= flatRight * velocity; break;
 			case RIGHT:	   Position += flatRight * velocity; break;
+			case DOWN:	   Position -= glm::vec3(0, 1, 0) * velocity; break;
+			case UP:	   Position += glm::vec3(0, 1, 0) * velocity; break;
 			}
 		}
 		else {
@@ -113,6 +117,14 @@ public:
 	void processScroll(float offsetY) {
 		Fov -= (float)offsetY;
 		Fov = std::max(FOV_MIN, std::min(Fov, FOV_MAX));
+	}
+
+	void getFacing() {
+		glm::vec3 dir = glm::normalize(glm::vec3(Front.x, 0.0f, Front.z));
+		if (fabs(dir.x) > fabs(dir.z)) {
+			std::cout << (dir.x > 0 ? "+X" : "-X") << std::endl;
+		}
+		else std::cout << (dir.z > 0 ? "+Z" : "-Z") << std::endl;
 	}
 
 private:

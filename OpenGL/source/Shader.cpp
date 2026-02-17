@@ -6,12 +6,6 @@
 Shader::Shader(const char* shaderPath) {
 	ID = glCreateProgram();
 	glUseProgram(ID);
-
-	/*if (!std::ifstream(shaderPath).good()) {
-		std::cout << "Invalid shader path" << std::endl;
-		return;
-	}*/
-
 	AddShaders(ParseShader(shaderPath));
 }
 
@@ -124,6 +118,11 @@ int Shader::GetUniformLocation(const char* name) const {
 
 void Shader::Uniform1i(const char* name, int v1) const {
 	glUniform1i(GetUniformLocation(name), v1);
+}
+
+void Shader::Uniform1f(const char* name, const float v1) const
+{
+	glUniform1f(GetUniformLocation(name), v1);
 }
 
 void Shader::Uniform3f(const char* name, const float v1, const float v2, const float v3) const

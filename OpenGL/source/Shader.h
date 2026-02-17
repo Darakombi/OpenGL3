@@ -28,6 +28,7 @@ private:
 public:
 	int GetUniformLocation(const char* name) const;
 	void Uniform1i(const char* name, const int v1) const;
+	void Uniform1f(const char* name, const float v1) const;
 	void Uniform3f(const char* name, const float v1, const float v2, const float v3) const;
 	void Uniform3fv(const char* name, const float* v1) const;
 	void Uniform4f(const char* name, const float v1, const float v2, const float v3, const float v4) const;

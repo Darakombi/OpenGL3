@@ -21,6 +21,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double positionX, double positionY);
 void scroll_callback(GLFWwindow* window, double offsetX, double offsetY);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 void processInput(GLFWwindow* window);
 
@@ -62,6 +63,7 @@ int main() {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	glfwSwapInterval(1);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -71,118 +73,124 @@ int main() {
 
 	const float subjectVertices[] = {
 		// back face
-		-0.5, -0.5, -0.5,    0.0f,  0.0f, -1.0f,
-		 0.5,  0.5, -0.5,    0.0f,  0.0f, -1.0f,
-		 0.5, -0.5, -0.5,    0.0f,  0.0f, -1.0f,
-		 0.5,  0.5, -0.5,    0.0f,  0.0f, -1.0f,
-		-0.5, -0.5, -0.5,    0.0f,  0.0f, -1.0f,
-		-0.5,  0.5, -0.5,    0.0f,  0.0f, -1.0f,
+		-0.5, -0.5, -0.5,	 0,  0, -1,		0, 0,
+		 0.5,  0.5, -0.5,	 0,  0, -1,		1, 1,
+		 0.5, -0.5, -0.5,	 0,  0, -1,		1, 0,
+		 0.5,  0.5, -0.5,	 0,  0, -1,		1, 1,
+		-0.5, -0.5, -0.5,	 0,  0, -1,		0, 0,
+		-0.5,  0.5, -0.5,	 0,  0, -1,		0, 1,
 
 		// front face
-		-0.5, -0.5,  0.5,    0.0f,  0.0f,  1.0f,
-		 0.5, -0.5,  0.5,    0.0f,  0.0f,  1.0f,
-		 0.5,  0.5,  0.5,    0.0f,  0.0f,  1.0f,
-		 0.5,  0.5,  0.5,    0.0f,  0.0f,  1.0f,
-		-0.5,  0.5,  0.5,    0.0f,  0.0f,  1.0f,
-		-0.5, -0.5,  0.5,    0.0f,  0.0f,  1.0f,
+		-0.5, -0.5,  0.5,	 0,  0,  1,		0, 0,
+		 0.5, -0.5,  0.5,	 0,  0,  1,		1, 0,
+		 0.5,  0.5,  0.5,	 0,  0,  1,		1, 1,
+		 0.5,  0.5,  0.5,	 0,  0,  1,		1, 1,
+		-0.5,  0.5,  0.5,	 0,  0,  1,		0, 1,
+		-0.5, -0.5,  0.5,	 0,  0,  1,		0, 0,
 
-		// left face
-		-0.5, -0.5, -0.5,   -1.0f,  0.0f,  0.0f,
-		-0.5, -0.5,  0.5,   -1.0f,  0.0f,  0.0f,
-		-0.5,  0.5,  0.5,   -1.0f,  0.0f,  0.0f,
-		-0.5,  0.5,  0.5,   -1.0f,  0.0f,  0.0f,
-		-0.5,  0.5, -0.5,   -1.0f,  0.0f,  0.0f,
-		-0.5, -0.5, -0.5,   -1.0f,  0.0f,  0.0f,
+		// left face			 	 
+		-0.5, -0.5, -0.5,	-1,  0,  0,		0, 0,
+		-0.5,  0.5, -0.5,	-1,  0,  0,		0, 1,
+		-0.5,  0.5,  0.5,	-1,  0,  0,		1, 1,
+		-0.5, -0.5, -0.5,	-1,  0,  0,		0, 0,
+		-0.5,  0.5,  0.5,	-1,  0,  0,		1, 1,
+		-0.5, -0.5,  0.5,	-1,  0,  0,		1, 0,
 
-		// right face
-		 0.5, -0.5, -0.5,    1.0f,  0.0f,  0.0f,
-		 0.5,  0.5,  0.5,    1.0f,  0.0f,  0.0f,
-		 0.5, -0.5,  0.5,    1.0f,  0.0f,  0.0f,
-		 0.5,  0.5,  0.5,    1.0f,  0.0f,  0.0f,
-		 0.5, -0.5, -0.5,    1.0f,  0.0f,  0.0f,
-		 0.5,  0.5, -0.5,    1.0f,  0.0f,  0.0f,
+		// right face			 	 
+		 0.5, -0.5, -0.5,	 1,  0,  0,		1, 0,
+		 0.5,  0.5, -0.5,	 1,  0,  0,		1, 1,
+		 0.5,  0.5,  0.5,	 1,  0,  0,		0, 1,
+		 0.5, -0.5, -0.5,	 1,  0,  0,		1, 0,
+		 0.5, -0.5,  0.5,	 1,  0,  0,		0, 0,
+		 0.5,  0.5,  0.5,	 1,  0,  0,		0, 1,
 
-		 // bottom face
-		 -0.5, -0.5,  0.5,    0.0f, -1.0f,  0.0f,
-		  0.5, -0.5,  0.5,    0.0f, -1.0f,  0.0f,
-		  0.5, -0.5, -0.5,    0.0f, -1.0f,  0.0f,
-		  0.5, -0.5, -0.5,    0.0f, -1.0f,  0.0f,
-		 -0.5, -0.5, -0.5,    0.0f, -1.0f,  0.0f,
-		 -0.5, -0.5,  0.5,    0.0f, -1.0f,  0.0f,
+		 // bottom face			 	 
+		-0.5, -0.5,  0.5,	 0, -1,  0,		0, 1,
+		 0.5, -0.5,  0.5,	 0, -1,  0,		1, 1,
+		 0.5, -0.5, -0.5,	 0, -1,  0,		1, 0,
+		 0.5, -0.5, -0.5,	 0, -1,  0,		1, 0,
+		-0.5, -0.5, -0.5,	 0, -1,  0,		0, 0,
+		-0.5, -0.5,  0.5,	 0, -1,  0,		0, 1,
 
-		 // top face
-		 -0.5,  0.5,  0.5,    0.0f,  1.0f,  0.0f,
-		  0.5,  0.5, -0.5,    0.0f,  1.0f,  0.0f,
-		  0.5,  0.5,  0.5,    0.0f,  1.0f,  0.0f,
-		  0.5,  0.5, -0.5,    0.0f,  1.0f,  0.0f,
-		 -0.5,  0.5,  0.5,    0.0f,  1.0f,  0.0f,
-		 -0.5,  0.5, -0.5,    0.0f,  1.0f,  0.0f,
+		// top face
+	    -0.5,  0.5, -0.5,	 0,  1,  0,		0, 0,
+		 0.5,  0.5, -0.5,	 0,  1,  0,		1, 0,
+		 0.5,  0.5,  0.5,	 0,  1,  0,		1, 1,
+	    -0.5,  0.5, -0.5,	 0,  1,  0,		0, 0,
+	    -0.5,  0.5,  0.5,	 0,  1,  0,		0, 1,
+		 0.5,  0.5,  0.5,	 0,  1,  0,		1, 1
 	};
-	const unsigned int subjectLayout[] = { 3, 3 };
+	const unsigned int subjectLayout[] = { 3, 3, 2 };
 	Object subject(subjectVertices, sizeof(subjectVertices) / sizeof(float), subjectLayout, sizeof(subjectLayout) / sizeof(unsigned int));
 	Shader subjectShader("source/resources/shaders/Main.Shader");
-	glm::vec3 subjectColor(1.0f, 0.5f, 0.31f);
-
-	Object subject2(subjectVertices, sizeof(subjectVertices) / sizeof(float), subjectLayout, sizeof(subjectLayout) / sizeof(unsigned int));
-	glm::vec3 subjectColor2(0.2f, 0.5f, 0.31f);
+	Texture subjectTexture("source/resources/textures/plank.png");
+	glm::vec3 subjectColor(1.0f, 1.0f, 1.0f);
 
 	const float lampVertices[] = {
 		// back face
-		-0.5, -0.5, -0.5,
-		 0.5,  0.5, -0.5,
-		 0.5, -0.5, -0.5,
-		 0.5,  0.5, -0.5,
-		-0.5, -0.5, -0.5,
-		-0.5,  0.5, -0.5,
+		-0.5, -0.5, -0.5,	 0, 0,
+		 0.5,  0.5, -0.5,	 1, 1,
+		 0.5, -0.5, -0.5,	 1, 0,
+		 0.5,  0.5, -0.5,	 1, 1,
+		-0.5, -0.5, -0.5,	 0, 0,
+		-0.5,  0.5, -0.5,	 0, 1,
 
 		// front face
-		-0.5, -0.5,  0.5,
-		 0.5, -0.5,  0.5,
-		 0.5,  0.5,  0.5,
-		 0.5,  0.5,  0.5,
-		-0.5,  0.5,  0.5,
-		-0.5, -0.5,  0.5,
+		-0.5, -0.5,  0.5,	 0, 0,
+		 0.5, -0.5,  0.5,	 1, 0,
+		 0.5,  0.5,  0.5,	 1, 1,
+		 0.5,  0.5,  0.5,	 1, 1,
+		-0.5,  0.5,  0.5,	 0, 1,
+		-0.5, -0.5,  0.5,	 0, 0,
 
-		// left face
-		-0.5, -0.5, -0.5,
-		-0.5, -0.5,  0.5,
-		-0.5,  0.5,  0.5,
-		-0.5,  0.5,  0.5,
-		-0.5,  0.5, -0.5,
-		-0.5, -0.5, -0.5,
+		// left face		
+		-0.5, -0.5, -0.5,	-0, 0,
+		-0.5,  0.5, -0.5,	-0, 1,
+		-0.5,  0.5,  0.5,	-1, 1,
+		-0.5, -0.5, -0.5,	-0, 0,
+		-0.5,  0.5,  0.5,	-1, 1,
+		-0.5, -0.5,  0.5,	-1, 0,
 
-		// right face
-		 0.5, -0.5, -0.5,
-		 0.5,  0.5,  0.5,
-		 0.5, -0.5,  0.5,
-		 0.5,  0.5,  0.5,
-		 0.5, -0.5, -0.5,
-		 0.5,  0.5, -0.5,
+		// right face		
+		 0.5, -0.5, -0.5,	 1, 0,
+		 0.5,  0.5, -0.5,	 1, 1,
+		 0.5,  0.5,  0.5,	 0, 1,
+		 0.5, -0.5, -0.5,	 1, 0,
+		 0.5, -0.5,  0.5,	 0, 0,
+		 0.5,  0.5,  0.5,	 0, 1,
 
-		 // top face
-		-0.5, -0.5,  0.5,
-		 0.5, -0.5, -0.5,
-		 0.5, -0.5,  0.5,
-		 0.5, -0.5, -0.5,
-		-0.5, -0.5,  0.5,
-		-0.5, -0.5, -0.5,
+		 // bottom face		
+		-0.5, -0.5,  0.5,	 0, 1,
+		 0.5, -0.5,  0.5,	 1, 1,
+		 0.5, -0.5, -0.5,	 1, 0,
+		 0.5, -0.5, -0.5,	 1, 0,
+		-0.5, -0.5, -0.5,	 0, 0,
+		-0.5, -0.5,  0.5,	 0, 1,
 
-		// bottom face
-		-0.5,  0.5,  0.5,
-		 0.5,  0.5,  0.5,
-		 0.5,  0.5, -0.5,
-		 0.5,  0.5, -0.5,
-		-0.5,  0.5, -0.5,
-		-0.5,  0.5,  0.5,
+		// top face
+	    -0.5,  0.5, -0.5,	 0, 0,
+		 0.5,  0.5, -0.5,	 1, 0,
+		 0.5,  0.5,  0.5,	 1, 1,
+	    -0.5,  0.5, -0.5,	 0, 0,
+	    -0.5,  0.5,  0.5,	 0, 1,
+		 0.5,  0.5,  0.5,	 1, 1
 	};
-	const unsigned int lampLayout[] = { 3 };
+	const unsigned int lampLayout[] = { 3, 2 };
 	Object lamp(lampVertices, sizeof(lampVertices) / sizeof(float), lampLayout, sizeof(lampLayout) / sizeof(unsigned int));
 	Shader lampShader("source/resources/shaders/Lamp.Shader");
-	glm::vec3 lampPos(1.2f, 1.0f, 2.0f);
+	Texture lampTexture("source/resources/textures/glowstone.png");
+	
+	glm::vec3 lampPos(0.0f, 1.25f, 1.0f);
 	glm::vec3 lampColor(1.0f, 1.0f, 1.0f);
 
-	float transX = 0.0f;
-	float transXAdd = 0.005f;
+	glm::vec3 ambientValue = subjectColor;
+	glm::vec3 diffuseValue = subjectColor;
+	glm::vec3 specularValue(0.65f);
+	float shininess = 32.0f;
+
+	glm::vec3 ambientStrength(0.1f);
+	glm::vec3 diffuseStrength(1.0f);
+	glm::vec3 specularStrength(1.0f);
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -190,6 +198,7 @@ int main() {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+		float time = (float)glfwGetTime();
 		processInput(window);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -197,39 +206,45 @@ int main() {
 		glm::mat4 proj = glm::perspective(glm::radians(camera.Fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 model(1.0f);
+		model = glm::scale(model, glm::vec3(0.75f));
+
+		lampPos = glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(deltaTime * 60.0f), glm::vec3(1, 0, 0)) * glm::vec4(lampPos, 1.0f));
 
 		{
 			subject.Bind();
 			subjectShader.Bind();
 
-			subjectShader.Uniform3fv("u_ObjectColor", glm::value_ptr(subjectColor));
-			subjectShader.Uniform3fv("u_LightColor", glm::value_ptr(lampColor));
-			subjectShader.Uniform3fv("u_LightPos", glm::value_ptr(lampPos));
-			subjectShader.Uniform3fv("u_ViewPos", glm::value_ptr(camera.getPosition()));
+			subjectTexture.Bind(0);
+			subjectShader.Uniform1i("u_TextureColor", 0);
+
+			{
+				subjectShader.Uniform3fv("u_LightColor", glm::value_ptr(lampColor));
+				subjectShader.Uniform3fv("u_ViewPos", glm::value_ptr(camera.getPosition()));
+				
+				subjectShader.Uniform3fv("material.ambient", glm::value_ptr(ambientValue));
+				subjectShader.Uniform3fv("material.diffuse", glm::value_ptr(diffuseValue));
+				subjectShader.Uniform3fv("material.specular", glm::value_ptr(specularValue));
+				subjectShader.Uniform1f("material.shininess", shininess);
+				
+				subjectShader.Uniform3fv("light.position", glm::value_ptr(lampPos));
+				subjectShader.Uniform3fv("light.ambient", glm::value_ptr(ambientStrength));
+				subjectShader.Uniform3fv("light.diffuse", glm::value_ptr(diffuseStrength));
+				subjectShader.Uniform3fv("light.specular", glm::value_ptr(specularStrength));
+			}
 
 			subjectShader.UniformMatrix4fv("proj", glm::value_ptr(proj));
 			subjectShader.UniformMatrix4fv("view", glm::value_ptr(view));
-			//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
-			model = glm::translate(model, glm::vec3(transX, 0.0f, 0.0f));
 			subjectShader.UniformMatrix4fv("model", glm::value_ptr(model));
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-
-			subject2.Bind();
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 2.0f));
-			subjectShader.UniformMatrix4fv("model", glm::value_ptr(model));
-			subjectShader.Uniform3fv("u_ObjectColor", glm::value_ptr(subjectColor2));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-
-		transX = std::sin(glfwGetTime()) + 1.0f;
-		transX += transXAdd;
 
 		{
 			lamp.Bind();
 			lampShader.Bind();
 
-			lampShader.Uniform3fv("u_Color", glm::value_ptr(lampColor));
+			lampTexture.Bind(0);
+			lampShader.Uniform1i("u_TextureColor", 0);
 
 			lampShader.UniformMatrix4fv("proj", glm::value_ptr(proj));
 			lampShader.UniformMatrix4fv("view", glm::value_ptr(view));
@@ -272,6 +287,12 @@ void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.processKeys(RIGHT, deltaTime);
 	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+		camera.processKeys(DOWN, deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+		camera.processKeys(UP, deltaTime);
+	}
 }
 
 void mouse_callback(GLFWwindow* window, double positionX, double positionY) {
@@ -293,4 +314,10 @@ void mouse_callback(GLFWwindow* window, double positionX, double positionY) {
 
 void scroll_callback(GLFWwindow* window, double offsetX, double offsetY) {
 	camera.processScroll(offsetY);
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+		camera.getFacing();
+	}
 }

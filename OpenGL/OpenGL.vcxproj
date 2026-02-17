@@ -108,6 +108,14 @@
     <None Include="source\resources\shaders\Lamp.Shader" />
     <None Include="source\resources\shaders\Main.Shader" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="source\resources\textures\cube.png" />
+    <Image Include="source\resources\textures\glowstone.png" />
+    <Image Include="source\resources\textures\happy.png" />
+    <Image Include="source\resources\textures\lion.png" />
+    <Image Include="source\resources\textures\plank.png" />
+    <Image Include="source\resources\textures\sammurray.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
