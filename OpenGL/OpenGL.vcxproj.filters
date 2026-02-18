@@ -92,5 +92,14 @@
     <Image Include="source\resources\textures\glowstone.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="source\resources\textures\ice.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\gold_ore.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\container.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

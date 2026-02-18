@@ -1,5 +1,6 @@
 #include "Texture.h"
 
+#include "glad/glad.h"
 #include "stb_image/stb_image.h"
 
 Texture::Texture(const std::string filepath, const bool near) {

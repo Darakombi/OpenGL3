@@ -73,7 +73,7 @@ unsigned int Shader::CompileShader(GLenum type, std::string src) const {
 			(type == GL_VERTEX_SHADER ? "vertex" :
 				(type == GL_FRAGMENT_SHADER ? "fragment" : " "))
 			<< "shader\n" << log << std::endl;
-		std::cout << src << std::endl;
+		//std::cout << src << std::endl;
 		return 0;
 	}
 	return shader;
