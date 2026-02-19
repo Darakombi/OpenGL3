@@ -69,6 +69,7 @@ int main() {
 
 	glfwSwapInterval(1);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
@@ -125,8 +126,8 @@ int main() {
 	const unsigned int subjectLayout[] = { 3, 3, 2 };
 	Object subject(subjectVertices, sizeof(subjectVertices) / sizeof(float), subjectLayout, sizeof(subjectLayout) / sizeof(unsigned int));
 	Shader subjectShader("source/resources/shaders/Main.Shader");
-	Texture subjectTexture("source/resources/textures/amethyst_block.png");
-	Texture subjectTextureSpecular("source/resources/textures/amethyst_blockSpecular.png");
+	Texture subjectTexture("source/resources/textures/container.png");
+	Texture subjectTextureSpecular("source/resources/textures/containerSpecular.png");
 
 	const float lampVertices[] = {
 		// back face
@@ -182,7 +183,8 @@ int main() {
 	Shader lampShader("source/resources/shaders/Lamp.Shader");
 	Texture lampTexture("source/resources/textures/glowstone.png");
 
-	glm::vec3 lampPos(0.0f, 1.0f, 1.0f);
+	glm::vec3 lampPos(0.0f, 0.0f, -7.0f);
+	glm::vec3 lampDir(-0.2f, -1.0f, -0.3f);
 	glm::vec3 lampColor(1.0f, 1.0f, 1.0f);
 
 	float shininess = 32.0f;
@@ -190,6 +192,19 @@ int main() {
 	glm::vec3 ambientStrength(0.1f);
 	glm::vec3 diffuseStrength(1.0f);
 	glm::vec3 specularStrength(10.0f);
+
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -204,10 +219,12 @@ int main() {
 		glm::mat4 proj = glm::perspective(glm::radians(camera.Fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 model(1.0f);
-		model = glm::scale(model, glm::vec3(0.6f));
 
-		lampPos = glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(deltaTime * 15.0f), glm::vec3(1, 0, 0)) * glm::vec4(lampPos, 1.0f));
-		lampPos.x += (sin(glfwGetTime() * 10.0) * 0.0005f);
+		/*float radius = 2.0f;
+		float time = glfwGetTime();
+		lampPos.x = sin(time) * radius;
+		lampPos.y = cos(time * 0.05f) * radius / 2;
+		lampPos.z = cos(time) * radius;*/
 
 		{
 			subject.Bind();
@@ -221,37 +238,61 @@ int main() {
 			{
 				subjectShader.Uniform1f("material.shininess", shininess);
 
-				subjectShader.Uniform3fv("light.position", glm::value_ptr(lampPos));
+				subjectShader.Uniform3fv("light.position", glm::value_ptr(camera.getPosition()));
+				subjectShader.Uniform3fv("light.direction", glm::value_ptr(camera.getFront()));
+				subjectShader.Uniform1f("light.innerCutoff", glm::cos(glm::radians(12.5f)));
+				subjectShader.Uniform1f("light.outerCutoff", glm::cos(glm::radians(17.5f)));
+
 				subjectShader.Uniform3fv("light.ambient", glm::value_ptr(ambientStrength));
 				subjectShader.Uniform3fv("light.diffuse", glm::value_ptr(diffuseStrength));
 				subjectShader.Uniform3fv("light.specular", glm::value_ptr(specularStrength));
 
+				subjectShader.Uniform1f("light.constant", 1.0f);
+				subjectShader.Uniform1f("light.linear", 0.045f);
+				subjectShader.Uniform1f("light.quadratic", 0.0075f);
+
 				subjectShader.Uniform3fv("u_ViewPos", glm::value_ptr(camera.getPosition()));
 			}
 
-			subjectShader.UniformMatrix4fv("proj", glm::value_ptr(proj));
-			subjectShader.UniformMatrix4fv("view", glm::value_ptr(view));
-			subjectShader.UniformMatrix4fv("model", glm::value_ptr(model));
+			subjectShader.UniformMat4fv("proj", glm::value_ptr(proj));
+			subjectShader.UniformMat4fv("view", glm::value_ptr(view));
+			/*model = glm::scale(model, glm::vec3(0.6f));
+			model *= glm::mat4(0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+			subjectShader.UniformMat4fv("model", glm::value_ptr(model));*/
+			for (unsigned int i = 0; i < 10; i++)
+			{
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, cubePositions[i]);
+				float angle = 20.0f * i;
+				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+				subjectShader.UniformMat4fv("model", glm::value_ptr(model));
+
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
+
+			//model = glm::mat4(1.0f);
+			//model = glm::scale(model, glm::vec3(40.0f));
+			//subjectShader.UniformMat4fv("model", glm::value_ptr(model));
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		{
+		/*{
 			lamp.Bind();
 			lampShader.Bind();
 
 			lampTexture.Bind(0);
 			lampShader.Uniform1i("u_TextureColor", 0);
 
-			lampShader.UniformMatrix4fv("proj", glm::value_ptr(proj));
-			lampShader.UniformMatrix4fv("view", glm::value_ptr(view));
+			lampShader.UniformMat4fv("proj", glm::value_ptr(proj));
+			lampShader.UniformMat4fv("view", glm::value_ptr(view));
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, lampPos);
 			model = glm::scale(model, glm::vec3(0.2f));
-			lampShader.UniformMatrix4fv("model", glm::value_ptr(model));
+			lampShader.UniformMat4fv("model", glm::value_ptr(model));
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		}*/
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -316,5 +357,8 @@ void scroll_callback(GLFWwindow* window, double offsetX, double offsetY) {
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 		camera.getFacing();
+	}
+	else if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
+		std::cout << camera.getFov() << std::endl;
 	}
 }

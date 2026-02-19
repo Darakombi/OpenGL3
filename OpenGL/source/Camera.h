@@ -19,7 +19,7 @@ float SENSITIVITY = 0.075f;
 float SPEED = 2.0f;
 float FOV = 45.0f;
 float FOV_MIN = 1.0f;
-float FOV_MAX = 45.0f;
+float FOV_MAX = 90.0f;
 
 class Camera {
 public:
@@ -73,6 +73,8 @@ public:
 	}
 
 	const glm::vec3 getPosition() const { return Position; }
+	const glm::vec3 getFront() const { return Front; }
+	const float getFov() const { return Fov; }
 
 	void processKeys(CameraDirection dir, float deltaTime, bool ignorePitch = true) {
 
@@ -115,7 +117,7 @@ public:
 	}
 
 	void processScroll(float offsetY) {
-		Fov -= (float)offsetY;
+		Fov -= (float)offsetY * 3;
 		Fov = std::max(FOV_MIN, std::min(Fov, FOV_MAX));
 	}
 

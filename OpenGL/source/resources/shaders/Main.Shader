@@ -39,10 +39,17 @@ struct Material {
 
 struct Light{
 	vec3 position;
+	vec3 direction;
+	float innerCutoff;
+	float outerCutoff;
 
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
+
+	float constant;
+	float linear;
+	float quadratic;
 };
 
 uniform Material material;
@@ -51,10 +58,15 @@ uniform vec3 u_ViewPos;
 
 void main()
 {
-	vec3 ambient = light.ambient * texture(material.diffuse, textureCoord).rgb;
-	
-	vec3 norm = normalize(normal);
 	vec3 lightDir = normalize(light.position - fragPos);
+
+	float theta = dot(lightDir, normalize(-light.direction));
+	float epsilon = light.innerCutoff - light.outerCutoff;
+	float intensity = clamp(0.0, (theta - light.outerCutoff) / epsilon, 1.0);
+
+	vec3 ambient = light.ambient * texture(material.diffuse, textureCoord).rgb;
+
+	vec3 norm = normalize(normal);
 	float diff = max(0.0, dot(norm, lightDir));
 	vec3 diffuse = light.diffuse * diff * texture(material.diffuse, textureCoord).rgb;
 	
@@ -62,6 +74,17 @@ void main()
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec3 specular = light.specular * spec * texture(material.specular, textureCoord).rgb;
+
+	float dist = length(light.position - fragPos);
+	float attenuation = 1.0 / (light.constant + light.linear * dist + light.quadratic * (dist * dist));
+
+	//ambient *= intensity;
+	diffuse *= intensity;
+	specular *= intensity;
+
+	//ambient *= attenuation;
+	diffuse *= attenuation;
+	specular *= attenuation;
 	
 	vec3 lm = ambient + diffuse + specular;
 

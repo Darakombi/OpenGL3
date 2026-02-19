@@ -143,6 +143,6 @@ void Shader::Uniform4fv(const char* name, const float* v1) const {
 	glUniform4fv(GetUniformLocation(name), 1, v1);
 }
 
-void Shader::UniformMatrix4fv(const char* name, const float* v1, const bool transpose) const {
+void Shader::UniformMat4fv(const char* name, const float* v1, const bool transpose) const {
 	glUniformMatrix4fv(GetUniformLocation(name), 1, false, v1);
 }

@@ -33,5 +33,5 @@ public:
 	void Uniform3fv(const char* name, const float* v1) const;
 	void Uniform4f(const char* name, const float v1, const float v2, const float v3, const float v4) const;
 	void Uniform4fv(const char* name, const float* v1) const;
-	void UniformMatrix4fv(const char* name, const float* v1, const bool transpose = false) const;
+	void UniformMat4fv(const char* name, const float* v1, const bool transpose = false) const;
 };
