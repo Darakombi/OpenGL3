@@ -18,7 +18,7 @@ void VertexArray::Unbind() const {
 	glBindVertexArray(0);
 }
 
-void VertexArray::AddAttribute(const VertexBuffer& vb, const VertexBufferLayout layout) const{
+void VertexArray::AddVB(const VertexBuffer& vb, const VertexBufferLayout layout) const{
 	glBindVertexArray(ID);
 	vb.Bind();
 

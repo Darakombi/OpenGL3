@@ -18,7 +18,7 @@ public:
 		for (unsigned int i = 0; i < vertexLayoutCount; i++) {
 			layout.Push<float>(vertexLayout[i]);
 		}
-		va.AddAttribute(vb, layout);
+		va.AddVB(vb, layout);
 	}
 
 	void Bind() const {

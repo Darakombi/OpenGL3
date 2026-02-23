@@ -116,33 +116,33 @@ int Shader::GetUniformLocation(const char* name) const {
 	return location;
 }
 
-void Shader::Uniform1i(const char* name, int v1) const {
+void Shader::U1i(const char* name, int v1) const {
 	glUniform1i(GetUniformLocation(name), v1);
 }
 
-void Shader::Uniform1f(const char* name, const float v1) const
+void Shader::U1f(const char* name, const float v1) const
 {
 	glUniform1f(GetUniformLocation(name), v1);
 }
 
-void Shader::Uniform3f(const char* name, const float v1, const float v2, const float v3) const
+void Shader::U3f(const char* name, const float v1, const float v2, const float v3) const
 {
 	glUniform3f(GetUniformLocation(name), v1, v2, v3);
 }
 
-void Shader::Uniform3fv(const char* name, const float* v1) const
+void Shader::U3fv(const char* name, const float* v1) const
 {
 	glUniform3fv(GetUniformLocation(name), 1, v1);
 }
 
-void Shader::Uniform4f(const char* name, float v1, float v2, float v3, float v4) const {
+void Shader::U4f(const char* name, float v1, float v2, float v3, float v4) const {
 	glUniform4f(GetUniformLocation(name), v1, v2, v3, v4);
 }
 
-void Shader::Uniform4fv(const char* name, const float* v1) const {
+void Shader::U4fv(const char* name, const float* v1) const {
 	glUniform4fv(GetUniformLocation(name), 1, v1);
 }
 
-void Shader::UniformMat4fv(const char* name, const float* v1, const bool transpose) const {
+void Shader::UMat4fv(const char* name, const float* v1, const bool transpose) const {
 	glUniformMatrix4fv(GetUniformLocation(name), 1, false, v1);
 }

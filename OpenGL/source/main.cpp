@@ -132,7 +132,7 @@ int main() {
 	Texture subjectTexture("source/resources/textures/container.png");
 	Texture subjectTextureSpecular("source/resources/textures/containerSpecular.png");
 
-	const float lampVertices[] = {
+	const float lightVertices[] = {
 		// back face
 		-0.5, -0.5, -0.5,	 0, 0,
 		 0.5,  0.5, -0.5,	 1, 1,
@@ -181,14 +181,14 @@ int main() {
 		-0.5,  0.5,  0.5,	 0, 1,
 		 0.5,  0.5,  0.5,	 1, 1
 	};
-	const unsigned int lampLayout[] = { 3, 2 };
-	Object lamp(lampVertices, sizeof(lampVertices) / sizeof(float), lampLayout, sizeof(lampLayout) / sizeof(unsigned int));
-	Shader lampShader("source/resources/shaders/Lamp.Shader");
-	Texture lampTexture("source/resources/textures/glowstone.png");
+	const unsigned int lightLayout[] = { 3, 2 };
+	Object light(lightVertices, sizeof(lightVertices) / sizeof(float), lightLayout, sizeof(lightLayout) / sizeof(unsigned int));
+	Shader lightShader("source/resources/shaders/Lamp.Shader");
+	Texture lightTexture("source/resources/textures/glowstone.png");
 
-	glm::vec3 lampPos(0.0f, 0.0f, -7.0f);
-	glm::vec3 lampDir(-0.2f, -1.0f, -0.3f);
-	glm::vec3 lampColor(1.0f, 1.0f, 1.0f);
+	glm::vec3 lightPos(0.0f, 0.0f, -7.0f);
+	glm::vec3 lightDir(-0.2f, -1.0f, -0.3f);
+	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 
 	float shininess = 32.0f;
 
@@ -236,69 +236,69 @@ int main() {
 			subjectShader.Bind();
 
 			subjectTexture.Bind(0);
-			subjectShader.Uniform1i("material.diffuse", 0);
+			subjectShader.U1i("material.diffuse", 0);
 			subjectTextureSpecular.Bind(1);
-			subjectShader.Uniform1i("material.specular", 1);
-			subjectShader.Uniform1f("material.shininess", shininess);
+			subjectShader.U1i("material.specular", 1);
+			subjectShader.U1f("material.shininess", shininess);
 
-			subjectShader.Uniform3fv("u_ViewPos", glm::value_ptr(camera.getPosition()));
+			subjectShader.U3fv("u_ViewPos", glm::value_ptr(camera.getPosition()));
 
-			subjectShader.Uniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
-			subjectShader.Uniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-			subjectShader.Uniform3f("dirLight.diffuse", 0.8f, 0.8f, 0.8f);
-			subjectShader.Uniform3f("dirLight.specular", 1.0f, 1.0f, 1.0f);
+			subjectShader.U3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
+			subjectShader.U3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+			subjectShader.U3f("dirLight.diffuse", 0.8f, 0.8f, 0.8f);
+			subjectShader.U3f("dirLight.specular", 1.0f, 1.0f, 1.0f);
 
 			for (unsigned int i = 0; i < points; i++) {
 				std::string name = "pointLights[" + std::to_string(i) + "]";
 
-				subjectShader.Uniform3fv((name + ".position").c_str(), glm::value_ptr(pointLightPositions[i]));
-				subjectShader.Uniform3f((name + ".ambient").c_str(), 0.05f, 0.05f, 0.05f);
-				subjectShader.Uniform3f((name + ".diffuse").c_str(), 0.8f, 0.8f, 0.8f);
-				subjectShader.Uniform3f((name + ".specular").c_str(), 1.0f, 1.0f, 1.0f);
-				subjectShader.Uniform1f((name + ".constant").c_str(), 1.0f);
-				subjectShader.Uniform1f((name + ".linear").c_str(), 0.09f);
-				subjectShader.Uniform1f((name + ".quadratic").c_str(), 0.032f);
+				subjectShader.U3fv((name + ".position").c_str(), glm::value_ptr(pointLightPositions[i]));
+				subjectShader.U3f((name + ".ambient").c_str(), 0.05f, 0.05f, 0.05f);
+				subjectShader.U3f((name + ".diffuse").c_str(), 0.8f, 0.8f, 0.8f);
+				subjectShader.U3f((name + ".specular").c_str(), 1.0f, 1.0f, 1.0f);
+				subjectShader.U1f((name + ".constant").c_str(), 1.0f);
+				subjectShader.U1f((name + ".linear").c_str(), 0.09f);
+				subjectShader.U1f((name + ".quadratic").c_str(), 0.032f);
 			}
 
-			subjectShader.Uniform3fv("spotLight.position", glm::value_ptr(camera.getPosition()));
-			subjectShader.Uniform3fv("spotLight.direction", glm::value_ptr(camera.getFront()));
-			subjectShader.Uniform3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-			subjectShader.Uniform3f("spotLight.diffuse", flashlight ? 1.0f : 0.0f, flashlight ? 1.0f : 0.0f, flashlight ? 1.0f : 0.0f);
-			subjectShader.Uniform3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
-			subjectShader.Uniform1f("spotLight.constant", 1.0f);
-			subjectShader.Uniform1f("spotLight.linear", 0.045f);
-			subjectShader.Uniform1f("spotLight.quadratic", 0.0075f);
-			subjectShader.Uniform1f("spotLight.innerCutoff", cos(glm::radians(12.5f)));
-			subjectShader.Uniform1f("spotLight.outerCutoff", cos(glm::radians(17.5f)));
+			subjectShader.U3fv("spotLight.position", glm::value_ptr(camera.getPosition()));
+			subjectShader.U3fv("spotLight.direction", glm::value_ptr(camera.getFront()));
+			subjectShader.U3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+			subjectShader.U3f("spotLight.diffuse", flashlight ? 1.0f : 0.0f, flashlight ? 1.0f : 0.0f, flashlight ? 1.0f : 0.0f);
+			subjectShader.U3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
+			subjectShader.U1f("spotLight.constant", 1.0f);
+			subjectShader.U1f("spotLight.linear", 0.045f);
+			subjectShader.U1f("spotLight.quadratic", 0.0075f);
+			subjectShader.U1f("spotLight.innerCutoff", cos(glm::radians(12.5f)));
+			subjectShader.U1f("spotLight.outerCutoff", cos(glm::radians(17.5f)));
 
-			subjectShader.UniformMat4fv("proj", glm::value_ptr(proj));
-			subjectShader.UniformMat4fv("view", glm::value_ptr(view));
+			subjectShader.UMat4fv("proj", glm::value_ptr(proj));
+			subjectShader.UMat4fv("view", glm::value_ptr(view));
 			for (unsigned int i = 0; i < 10; i++)
 			{
 				model = glm::mat4(1.0f);
 				model = glm::translate(model, cubePositions[i]);
 				float angle = 20.0f * i;
 				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-				subjectShader.UniformMat4fv("model", glm::value_ptr(model));
+				subjectShader.UMat4fv("model", glm::value_ptr(model));
 
 				glDrawArrays(GL_TRIANGLES, 0, 36);
 			}
 		}
 
 		{
-			lamp.Bind();
-			lampShader.Bind();
+			light.Bind();
+			lightShader.Bind();
 
-			lampTexture.Bind(0);
-			lampShader.Uniform1i("u_TextureColor", 0);
+			lightTexture.Bind(0);
+			lightShader.U1i("u_TextureColor", 0);
 
-			lampShader.UniformMat4fv("proj", glm::value_ptr(proj));
-			lampShader.UniformMat4fv("view", glm::value_ptr(view));
+			lightShader.UMat4fv("proj", glm::value_ptr(proj));
+			lightShader.UMat4fv("view", glm::value_ptr(view));
 			for (unsigned int i = 0; i < points; i++) {
 				model = glm::mat4(1.0f);
 				model = glm::translate(model, pointLightPositions[i]);
 				model = glm::scale(model, glm::vec3(0.2f));
-				lampShader.UniformMat4fv("model", glm::value_ptr(model));
+				lightShader.UMat4fv("model", glm::value_ptr(model));
 				glDrawArrays(GL_TRIANGLES, 0, 36);
 			}
 		}

@@ -16,5 +16,5 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
-	void AddAttribute(const VertexBuffer& vb, const VertexBufferLayout layout) const;
+	void AddVB(const VertexBuffer& vb, const VertexBufferLayout layout) const;
 };
