@@ -98,27 +98,18 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\Mesh.cpp" />
+    <ClCompile Include="source\Model.h" />
     <ClCompile Include="source\Shader.cpp" />
-    <ClCompile Include="source\IndexBuffer.cpp" />
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\Texture.cpp" />
-    <ClCompile Include="source\VertexBuffer.cpp" />
     <ClCompile Include="source\vendor\glad\src\glad.c" />
     <ClCompile Include="source\vendor\stb_image\stb_image.cpp" />
-    <ClCompile Include="source\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Mesh.h" />
     <ClInclude Include="source\Object.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Shader.h" />
-    <ClInclude Include="source\IndexBuffer.h" />
-    <ClInclude Include="source\Texture.h" />
     <ClInclude Include="source\vendor\stb_image\stb_image.h" />
-    <ClInclude Include="source\VertexBuffer.h" />
-    <ClInclude Include="source\VertexArray.h" />
-    <ClInclude Include="source\VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="source\resources\shaders\Lamp.Shader" />
