@@ -58,6 +58,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)source\vendor;$(ProjectDir)source\vendor\glad\include;$(ProjectDir)source\vendor\glfw\include;$(ProjectDir)source\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -82,6 +83,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)source\vendor;$(ProjectDir)source\vendor\glad\include;$(ProjectDir)source\vendor\glfw\include;$(ProjectDir)source\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -109,14 +111,19 @@
     <ClInclude Include="source\Object.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Shader.h" />
+    <ClInclude Include="source\TextureOLD.h" />
     <ClInclude Include="source\vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="source\resources\shaders\Lamp.Shader" />
+    <None Include="source\resources\shaders\Light.Shader" />
     <None Include="source\resources\shaders\Main.Shader" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="source\resources\textures\amethyst_block.png" />
+    <Image Include="source\resources\textures\amethyst_blockSpecular.png" />
     <Image Include="source\resources\textures\container.png" />
+    <Image Include="source\resources\textures\containerSpecular.png" />
+    <Image Include="source\resources\textures\containerSpecular2.png" />
     <Image Include="source\resources\textures\cube.png" />
     <Image Include="source\resources\textures\glowstone.png" />
     <Image Include="source\resources\textures\gold_ore.png" />

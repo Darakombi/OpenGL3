@@ -47,10 +47,13 @@
     <ClInclude Include="source\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\TextureOLD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="source\resources\shaders\Main.Shader" />
-    <None Include="source\resources\shaders\Lamp.Shader" />
+    <None Include="source\resources\shaders\Light.Shader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="source\resources\textures\cube.png">
@@ -78,6 +81,18 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="source\resources\textures\container.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\amethyst_block.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\amethyst_blockSpecular.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\containerSpecular.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="source\resources\textures\containerSpecular2.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

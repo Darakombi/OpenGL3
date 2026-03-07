@@ -13,6 +13,8 @@
 #include "Model.h"
 #include "Camera.h"
 
+#include "TextureOLD.h"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double positionX, double positionY);
 void scroll_callback(GLFWwindow* window, double offsetX, double offsetY);
@@ -57,7 +59,7 @@ int main() {
 
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -73,6 +75,73 @@ int main() {
 
 	Shader shader("source/resources/shaders/Main.Shader");
 	Model testModel("source/resources/textures/backpack/backpack.obj");
+
+	const float vertices[] = {
+		// back face
+		-0.5, -0.5, -0.5,	 0, 0,
+		 0.5,  0.5, -0.5,	 1, 1,
+		 0.5, -0.5, -0.5,	 1, 0,
+		 0.5,  0.5, -0.5,	 1, 1,
+		-0.5, -0.5, -0.5,	 0, 0,
+		-0.5,  0.5, -0.5,	 0, 1,
+
+		// front face
+		-0.5, -0.5,  0.5,	 0, 0,
+		 0.5, -0.5,  0.5,	 1, 0,
+		 0.5,  0.5,  0.5,	 1, 1,
+		 0.5,  0.5,  0.5,	 1, 1,
+		-0.5,  0.5,  0.5,	 0, 1,
+		-0.5, -0.5,  0.5,	 0, 0,
+
+		// left face		
+		-0.5, -0.5, -0.5,	-0, 0,
+		-0.5,  0.5, -0.5,	-0, 1,
+		-0.5,  0.5,  0.5,	-1, 1,
+		-0.5, -0.5, -0.5,	-0, 0,
+		-0.5,  0.5,  0.5,	-1, 1,
+		-0.5, -0.5,  0.5,	-1, 0,
+
+		// right face		
+		 0.5, -0.5, -0.5,	 1, 0,
+		 0.5,  0.5, -0.5,	 1, 1,
+		 0.5,  0.5,  0.5,	 0, 1,
+		 0.5, -0.5, -0.5,	 1, 0,
+		 0.5, -0.5,  0.5,	 0, 0,
+		 0.5,  0.5,  0.5,	 0, 1,
+
+		 // bottom face		
+		-0.5, -0.5,  0.5,	 0, 1,
+		 0.5, -0.5,  0.5,	 1, 1,
+		 0.5, -0.5, -0.5,	 1, 0,
+		 0.5, -0.5, -0.5,	 1, 0,
+		-0.5, -0.5, -0.5,	 0, 0,
+		-0.5, -0.5,  0.5,	 0, 1,
+
+		// top face
+		-0.5,  0.5, -0.5,	 0, 0,
+		 0.5,  0.5, -0.5,	 1, 0,
+		 0.5,  0.5,  0.5,	 1, 1,
+		-0.5,  0.5, -0.5,	 0, 0,
+		-0.5,  0.5,  0.5,	 0, 1,
+		 0.5,  0.5,  0.5,	 1, 1
+	};
+	
+	unsigned int vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	unsigned int vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	//glm::vec3 lightPos(0.0f, 5.0f, -12.0f);
+
+	Shader lightShader("source/resources/shaders/Light.shader");
+	TextureOLD lightTexture("source/resources/textures/glowstone.png");
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -90,11 +159,44 @@ int main() {
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 model(1.0f);
 
+		glm::vec3 lightPos(1.0f);
+		float radius = 12.0f;
+		lightPos.y = 6.0f;
+		lightPos.x = cos(glfwGetTime()) * radius;
+		lightPos.z = sin(glfwGetTime()) * radius;
+
 		shader.UMat4fv("proj", glm::value_ptr(proj));
 		shader.UMat4fv("view", glm::value_ptr(view));
 		shader.UMat4fv("model", glm::value_ptr(model));
-		
+
+		shader.U3fv("u_ViewPos", glm::value_ptr(camera.getPosition()));
+
+		shader.U3fv("light.position", glm::value_ptr(lightPos));
+
+		shader.U3f("light.ambient", 0.2, 0.2, 0.2);
+		shader.U3f("light.diffuse", 1.0, 1.0, 1.0);
+		shader.U3f("light.specular", 0.5, 0.5, 0.5);
+
+		shader.U1f("light.constant", 1.0);
+		shader.U1f("light.linear", 0.022);
+		shader.U1f("light.quadratic", 0.0019);
+
 		testModel.Draw(shader);
+
+		glBindVertexArray(vao);
+		lightShader.Bind();
+
+		lightTexture.Bind(0);
+		lightShader.U1i("u_Tex1", 0);
+
+		lightShader.UMat4fv("proj", glm::value_ptr(proj));
+		lightShader.UMat4fv("view", glm::value_ptr(view));
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPos);
+		lightShader.UMat4fv("model", glm::value_ptr(model));
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -163,7 +265,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	else if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
 		std::cout << camera.getFov() << std::endl;
 	}
-	else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		flashlight = !flashlight;
 	}
 }

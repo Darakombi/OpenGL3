@@ -41,7 +41,7 @@ public:
 		unsigned int diffuseArg = 1;
 		unsigned int specularArg = 1;
 
-		for (int i = 0; i < Textures.size(); i++) {
+		for (unsigned int i = 0; i < Textures.size(); i++) {
 
 			glActiveTexture(GL_TEXTURE0 + i);
 
@@ -54,7 +54,7 @@ public:
 				arg = std::to_string(specularArg++);
 			}
 
-			std::string name = "tex_" + type + arg;
+			std::string name = "material." + type + arg;
 
 			shader.U1i(name.c_str(), i);
 			glBindTexture(GL_TEXTURE_2D, Textures[i].id);
@@ -62,8 +62,8 @@ public:
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(Indices.size()), GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
 
+		glBindVertexArray(0);
 		glActiveTexture(GL_TEXTURE0);
 	}
 

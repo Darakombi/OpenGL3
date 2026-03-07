@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 unsigned int TextureFromFile(const char* path, const std::string& directory);
 
@@ -135,18 +136,18 @@ private:
 				loadedTextures.push_back(texture);
 			}
 		}
-
+		
 		return textures;
 	}
 
-	unsigned int TextureFromFile(const char* path, const std::string& directory) {
-		std::string filename = directory + '/' + path;
+	unsigned int TextureFromFile(const char* name, const std::string& directory) {
+		std::string path = directory + '/' + name;
 
 		unsigned int textureID;
 		glGenTextures(1, &textureID);
 
 		int width, height, nrChannels;
-		unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
+		unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 
 		if (data) {
 			GLenum format;
@@ -170,7 +171,7 @@ private:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 		else {
-			std::cout << "Failed to load texture: " << path << '\n' << stbi_failure_reason() << std::endl;
+			std::cout << "Failed to load texture: " << name << '\n' << stbi_failure_reason() << std::endl;
 		}
 		stbi_image_free(data);
 
